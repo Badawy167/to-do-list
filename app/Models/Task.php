@@ -10,7 +10,6 @@ class Task extends Model
         'title',
         'status'
     ];
-        public function User(){
+public function user(){
     return $this->belongsTo(User::class);
-        }
-}
+}}

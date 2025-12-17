@@ -8,10 +8,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+
+
+
+
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasapiToken;
+use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -24,10 +29,9 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function Task(){
+public function tasks(){
     return $this->hasMany(Task::class);
 }
-
 
     /**
      * The attributes that should be hidden for serialization.
