@@ -1,12 +1,17 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Models\User;
 use App\Http\Controllers\Api;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\TaskController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+
+
 
 
 

@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use App\Http\Controllers\Api\AuthController;
-use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
@@ -41,4 +41,33 @@ public function register(Request $request){
             ]
         ]);
 }
+//////////login
+        public function login(Request $request){
+            //validate
+            $validated = $request->validate([
+                'email' => ['required','email','max:255'],
+                'password' => ['required','string','min:8'],
+            ]);
+                if( ! Auth::attempt($validated)){
+                    return response()->json([
+                        'status'=> false,
+                        'message'=>'Invalid credentials'
+                    ]);
+                }
+                $user= Auth::user();
+                
+                $token=$user->createToken('api_token')->plainTextToken;
+                return response()->json([
+                    'status'=>true,
+                    'message'=>[
+                        'ar'=> 'تم تسجيل الدخول بنجاح',
+                        'en' => 'Logged in successfully'],
+                    'data'=>[
+                        'id'=>$user->id,
+                        'name'=>$user->name,
+                        'email'=>$user->email,
+                        'token'=>$token,
+                    ]
+            ]);
+    }
 }

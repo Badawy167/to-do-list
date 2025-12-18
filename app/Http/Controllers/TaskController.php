@@ -16,41 +16,157 @@ class TaskController extends Controller
     return response()->json($tasks);  
   }
 
-public function store(Request $request)
-{
-    $user = $request->user();
+ public function store(Request $request)
+    {
+        $user = $request->user();
 
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'status' => 'required|string|max:255',
-    ]);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'ar' => 'يجب تسجيل الدخول',
+                    'en' => 'Please login'
+                ]
+            ]);
+        }
 
-    $task = Task::create([
-        'title' => $validated['title'],
-        'status' => $validated['status'],
-        'user_id' => $user->id,
-    ]);
+        $validated = $request->validate([
+            'title'  => ['required','string','max:255'],
+            'status' => ['required','string','max:255'],
+        ]);
 
-    return response()->json([
-        'status' => true,
-        'data' => $task
-    ]);
-}
-public function show($id)
-{
-    $task = Task::find($id);
+        $task = Task::create([
+            'title'   => $validated['title'],
+            'status'  => $validated['status'],
+            'user_id' => $user->id,
+        ]);
 
-    if (!$task) {
         return response()->json([
-            'status' => 'error',
-            'message' => 'Task not found'
+            'status' => true,
+            'message' => [
+                'ar' => 'تم بنجاح',
+                'en' => 'Successfully'
+            ],
+            'data' => [
+                'id'     => $task->id,
+                'title'  => $task->title,
+                'status' => $task->status,
+                'user_id'=> $task->user_id
+            ]
         ]);
     }
 
+    // show
+    public function show(Request $request, $id)
+    {
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'ar' => 'غير موجود',
+                    'en' => 'Not found'
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'id'     => $task->id,
+                'title'  => $task->title,
+                'status' => $task->status,
+                'user_id'=> $task->user_id
+            ]
+        ]);
+    }
+
+// delete
+public function destroy(Request $request, $id)
+{
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json([
+            'status' => false,
+            'message' => [
+                'ar' => 'يجب تسجيل الدخول',
+                'en' => 'Please login'
+            ]
+        ]);
+    }
+
+    $task = Task::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+    if (!$task) {
+        return response()->json([
+            'status' => false,
+            'message' => [
+                'ar' => 'غير موجود',
+                'en' => 'Not found'
+            ]
+        ]);
+    }
+    $task->delete();    
     return response()->json([
-        'status' => 'success',
-        'data' => $task
+        'status' => true,
+        'message' => [
+            'ar' => 'تم الحذف بنجاح',
+            'en' => 'Deleted successfully'
+        ]
     ]);
 }
 
+// Update a task
+public function update(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'ar' => 'يجب تسجيل الدخول',
+                    'en' => 'Please login'
+                ]
+            ]);
+        }
+
+        $task = Task::where('id', $id)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+        if (!$task) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    'ar' => 'غير موجود',
+                    'en' => 'Not found'
+                ]
+            ]);
+        }
+
+        $validated = $request->validate([
+            'title'  => ['required', 'string', 'max:255'],
+            'status' => ['required', 'string', 'max:255'],
+        ]);
+
+        $task->update($validated);
+
+        return response()->json([
+            'status' => true,
+            'message' => [
+                'ar' => 'تم التعديل بنجاح',
+                'en' => 'Updated successfully'
+            ],
+            'data' => [
+                'id'      => $task->id,
+                'title'   => $task->title,
+                'status'  => $task->status,
+                'user_id' => $task->user_id
+            ]
+        ]);
+    }
 }
