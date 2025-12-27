@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
 public function register(Request $request){
-    // تسجيل مستخدم جديد
     $validated = $request->validate([
         'name' => ['required','string','max:255'],
         'email' => ['required','email','max:255','unique:users'],

@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class Product extends Model
 {
         protected $fillable = [
-        'title',
-        'status',
+        'name',
+        'description',
+        'price',
+        'Discounted_price',
         'user_id',
     ];
 public function user(){
